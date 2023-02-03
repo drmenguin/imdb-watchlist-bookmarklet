@@ -1,4 +1,4 @@
-# IMDB Watchlist Random Picker
+# IMDB Watchlist Random Movie Picker
 A browser bookmark which, when on your IMDb watchlist page, will scroll to a random point on the page, and highlight a film to watch. If you're not happy with the choice, just click it again to get another recommendation.
 
 ![image](preview.webp)
