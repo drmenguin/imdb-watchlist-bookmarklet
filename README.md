@@ -12,38 +12,85 @@ Just get the link from **[this webpage](https://lc.mt/imdb-bookmarklet)**, and d
 It's just simple js. Here is the source code:
 
 ```javascript
-javascript:(function(){var t=setInterval(()=>{var e=document.querySelector('div[data-testid="ip_ref"]');e?e.scrollIntoView({behavior:"instant",block:"end"}):(clearInterval(t),function t(){var e=document.getElementsByClassName("ipc-metadata-list-summary-item");if(0===e.length)return;let o=Math.floor(Math.random()*e.length),l=e[o].style.backgroundColor,r=e[o].style.transform;e[o].style.backgroundColor="#F9FABE",e[o].style.boxShadow="0px 0px 22px #FF0",e[o].style.transform="scale(1.1)",e[o].style.transition="all 0.5s ease",e[o].scrollIntoView({behavior:"smooth",block:"center"}),setTimeout(()=>{e[o].style.backgroundColor=l,e[o].style.boxShadow="",e[o].style.transform=r},2e3)}())},1e3)})();
+javascript:(function(){function t(){var t=document.getElementsByClassName("ipc-metadata-list-summary-item");if(0===t.length)return;let e=Math.floor(Math.random()*t.length),o=t[e];o.style.backgroundColor="#F9FABE",o.style.boxShadow="0px 0px 20px #FF0",o.style.padding="10px",o.style.margin="10px",o.style.borderRadius="10px",o.style.transition="all 0.5s",o.scrollIntoView({behavior:"smooth",block:"center"}),setTimeout(()=>{o.style.backgroundColor="",o.style.boxShadow="",o.style.padding="",o.style.margin="",o.style.borderRadius=""},3e3)}document.querySelector('div[data-testid="ip_ref"]')?function e(){var o,l=document.querySelector('div[data-testid="ip_ref"]');l?(!function t(){if(!document.getElementById("loadingNotification")){var e=document.createElement("div");e.id="loadingNotification",e.style.position="fixed",e.style.top="50%",e.style.left="50%",e.style.transform="translate(-50%, -50%)",e.style.padding="20px",e.style.backgroundColor="rgba(0,0,0,0.8)",e.style.color="white",e.style.borderRadius="10px",e.style.zIndex="1000",e.style.fontSize="20px",e.style.textAlign="center",e.style.boxShadow="0 4px 6px rgba(0,0,0,0.1)",e.innerText="Just scrolling to the bottom to load all the films before picking a random one :-)",document.body.appendChild(e)}}(),l.scrollIntoView({behavior:"smooth",block:"end"}),setTimeout(e,1000)):((o=document.getElementById("loadingNotification"))&&o.remove(),setTimeout(t,500))}():t()})();
 ```
 
 Here it is unminified:
 
 ```javascript
-javascript:(function(){
-    var intervalID = setInterval(() => {
-        var loadMoreDiv = document.querySelector('div[data-testid="ip_ref"]');
-        if (loadMoreDiv) {
-            loadMoreDiv.scrollIntoView({ behavior: 'instant', block: 'end' });
-        } else {
-            clearInterval(intervalID);
-            highlightRandomFilm();
+javascript:(function() {
+    function createNotificationBox() {
+        var existingBox = document.getElementById('loadingNotification');
+        if (!existingBox) {
+            var notificationBox = document.createElement('div');
+            notificationBox.id = 'loadingNotification';
+            notificationBox.style.position = 'fixed';
+            notificationBox.style.top = '50%';
+            notificationBox.style.left = '50%';
+            notificationBox.style.transform = 'translate(-50%, -50%)';
+            notificationBox.style.padding = '20px';
+            notificationBox.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            notificationBox.style.color = 'white';
+            notificationBox.style.borderRadius = '10px';
+            notificationBox.style.zIndex = '1000';
+            notificationBox.style.fontSize = '20px';
+            notificationBox.style.textAlign = 'center';
+            notificationBox.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            notificationBox.innerText = 'Just scrolling to the bottom to load all the films before picking a random one :-)';
+            document.body.appendChild(notificationBox);
         }
-    }, 1000);
-    function highlightRandomFilm() {
+    }
+
+    function removeNotificationBox() {
+        var notificationBox = document.getElementById('loadingNotification');
+        if (notificationBox) {
+            notificationBox.remove();
+        }
+    }
+
+    function scrollToRandomFilm() {
         var films = document.getElementsByClassName('ipc-metadata-list-summary-item');
         if (films.length === 0) return;
-        const random_i = Math.floor(Math.random() * films.length);
-        const old_colour = films[random_i].style.backgroundColor;
-        const old_transform = films[random_i].style.transform;
-        films[random_i].style.backgroundColor = "#F9FABE";
-        films[random_i].style.boxShadow = "0px 0px 22px #FF0";
-        films[random_i].style.transform = "scale(1.1)";
-        films[random_i].style.transition = "all 0.5s ease";
-        films[random_i].scrollIntoView({behavior: 'smooth', block: 'center'});
+        const randomIndex = Math.floor(Math.random() * films.length);
+        const selectedFilm = films[randomIndex];
+
+        // Highlight the selected film
+        selectedFilm.style.backgroundColor = "#F9FABE"; // Light yellow background
+        selectedFilm.style.boxShadow = "0px 0px 20px #FF0"; // Glowing shadow
+        selectedFilm.style.padding = "10px";
+        selectedFilm.style.margin = "10px";
+        selectedFilm.style.borderRadius = "10px";
+        selectedFilm.style.transition = "all 0.5s"; // Smooth transition for styles
+
+        selectedFilm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Remove highlight after some time
         setTimeout(() => {
-            films[random_i].style.backgroundColor = old_colour;
-            films[random_i].style.boxShadow = "";
-            films[random_i].style.transform = old_transform;
-        }, 2000);
+            selectedFilm.style.backgroundColor = ""; // Reset background color
+            selectedFilm.style.boxShadow = ""; // Reset box shadow
+            selectedFilm.style.padding = "";
+            selectedFilm.style.margin = "";
+            selectedFilm.style.borderRadius = "";
+        }, 3000); // Highlight duration
+    }
+
+    function handleScrolling() {
+        var loadMoreDiv = document.querySelector('div[data-testid="ip_ref"]');
+        if (loadMoreDiv) {
+            createNotificationBox();
+            loadMoreDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            setTimeout(handleScrolling, 750);
+        } else {
+            removeNotificationBox();
+            setTimeout(scrollToRandomFilm, 1000); // Wait a bit before scrolling to film
+        }
+    }
+
+    // Initialise scrolling or directly scroll to film
+    var loadMoreDivExists = document.querySelector('div[data-testid="ip_ref"]');
+    if (loadMoreDivExists) {
+        handleScrolling();
+    } else {
+        scrollToRandomFilm();
     }
 })();
 ```
