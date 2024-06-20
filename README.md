@@ -12,85 +12,56 @@ Just get the link from **[this webpage](https://lc.mt/imdb-bookmarklet)**, and d
 It's just simple js. Here is the source code:
 
 ```javascript
-javascript:(function(){function t(){var t=document.getElementsByClassName("ipc-metadata-list-summary-item");if(0===t.length)return;let e=Math.floor(Math.random()*t.length),o=t[e];o.style.backgroundColor="#F9FABE",o.style.boxShadow="0px 0px 20px #FF0",o.style.padding="10px",o.style.margin="10px",o.style.borderRadius="10px",o.style.transition="all 0.5s",o.scrollIntoView({behavior:"smooth",block:"center"}),setTimeout(()=>{o.style.backgroundColor="",o.style.boxShadow="",o.style.padding="",o.style.margin="",o.style.borderRadius=""},3e3)}document.querySelector('div[data-testid="ip_ref"]')?function e(){var o,l=document.querySelector('div[data-testid="ip_ref"]');l?(!function t(){if(!document.getElementById("loadingNotification")){var e=document.createElement("div");e.id="loadingNotification",e.style.position="fixed",e.style.top="50%",e.style.left="50%",e.style.transform="translate(-50%, -50%)",e.style.padding="20px",e.style.backgroundColor="rgba(0,0,0,0.8)",e.style.color="white",e.style.borderRadius="10px",e.style.zIndex="1000",e.style.fontSize="20px",e.style.textAlign="center",e.style.boxShadow="0 4px 6px rgba(0,0,0,0.1)",e.innerText="Just scrolling to the bottom to load all the films before picking a random one :-)",document.body.appendChild(e)}}(),l.scrollIntoView({behavior:"smooth",block:"end"}),setTimeout(e,1000)):((o=document.getElementById("loadingNotification"))&&o.remove(),setTimeout(t,500))}():t()})();
+javascript:(function(){var e;function t(){var e=document.getElementsByClassName("ipc-metadata-list-summary-item");if(0===e.length)return;let t=e[Math.floor(Math.random()*e.length)];t.style.cssText="background:#F9FABE;box-shadow:0px 0px 20px #FF0;padding:10px;margin:10px;border-radius:10px;transition:all 0.5s;",t.scrollIntoView({behavior:"smooth",block:"center"}),setTimeout(()=>t.style.cssText="",3e3)}e||((e=document.createElement("div")).style.cssText="position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);padding:20px;background:rgba(0,0,0,0.8);color:white;z-index:1000;font-size:20px;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,0.1);",e.innerText="Loading all films...",document.body.appendChild(e)),function a(){var n=parseInt(document.querySelector('div[data-testid="list-page-mc-total-items"]').innerText.match(/\d+/)[0]);document.getElementsByClassName("ipc-metadata-list-summary-item").length<n?(document.querySelector('div[data-testid="list-page-mc-list-content"]').scrollIntoView({behavior:"smooth",block:"end"}),setTimeout(a,750)):(e&&e.parentNode&&(e.parentNode.removeChild(e),e=null),setTimeout(t,500))}()})();
 ```
 
 Here it is unminified:
 
 ```javascript
 javascript:(function() {
+    var notificationBox;  // Global reference for the notification box
+
     function createNotificationBox() {
-        var existingBox = document.getElementById('loadingNotification');
-        if (!existingBox) {
-            var notificationBox = document.createElement('div');
-            notificationBox.id = 'loadingNotification';
-            notificationBox.style.position = 'fixed';
-            notificationBox.style.top = '50%';
-            notificationBox.style.left = '50%';
-            notificationBox.style.transform = 'translate(-50%, -50%)';
-            notificationBox.style.padding = '20px';
-            notificationBox.style.backgroundColor = 'rgba(0,0,0,0.8)';
-            notificationBox.style.color = 'white';
-            notificationBox.style.borderRadius = '10px';
-            notificationBox.style.zIndex = '1000';
-            notificationBox.style.fontSize = '20px';
-            notificationBox.style.textAlign = 'center';
-            notificationBox.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-            notificationBox.innerText = 'Just scrolling to the bottom to load all the films before picking a random one :-)';
+        if (!notificationBox) {  // Only create if it does not already exist
+            notificationBox = document.createElement('div');
+            notificationBox.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);padding:20px;background:rgba(0,0,0,0.8);color:white;z-index:1000;font-size:20px;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,0.1);';
+            notificationBox.innerText = 'Loading all films...';
             document.body.appendChild(notificationBox);
         }
     }
 
     function removeNotificationBox() {
-        var notificationBox = document.getElementById('loadingNotification');
-        if (notificationBox) {
-            notificationBox.remove();
+        if (notificationBox && notificationBox.parentNode) {
+            notificationBox.parentNode.removeChild(notificationBox);  // More reliable removal
+            notificationBox = null;  // Clear the reference to avoid future conflicts
         }
     }
 
     function scrollToRandomFilm() {
         var films = document.getElementsByClassName('ipc-metadata-list-summary-item');
         if (films.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * films.length);
-        const selectedFilm = films[randomIndex];
-
-        // Highlight the selected film
-        selectedFilm.style.backgroundColor = "#F9FABE"; // Light yellow background
-        selectedFilm.style.boxShadow = "0px 0px 20px #FF0"; // Glowing shadow
-        selectedFilm.style.padding = "10px";
-        selectedFilm.style.margin = "10px";
-        selectedFilm.style.borderRadius = "10px";
-        selectedFilm.style.transition = "all 0.5s"; // Smooth transition for styles
-
+        const selectedFilm = films[Math.floor(Math.random() * films.length)];
+        selectedFilm.style.cssText = 'background:#F9FABE;box-shadow:0px 0px 20px #FF0;padding:10px;margin:10px;border-radius:10px;transition:all 0.5s;';
         selectedFilm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Remove highlight after some time
-        setTimeout(() => {
-            selectedFilm.style.backgroundColor = ""; // Reset background color
-            selectedFilm.style.boxShadow = ""; // Reset box shadow
-            selectedFilm.style.padding = "";
-            selectedFilm.style.margin = "";
-            selectedFilm.style.borderRadius = "";
-        }, 3000); // Highlight duration
+        setTimeout(() => selectedFilm.style.cssText = '', 3000);
     }
 
-    function handleScrolling() {
-        var loadMoreDiv = document.querySelector('div[data-testid="ip_ref"]');
-        if (loadMoreDiv) {
-            createNotificationBox();
-            loadMoreDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            setTimeout(handleScrolling, 750);
+    function checkAllFilmsLoaded() {
+        var totalItemsText = document.querySelector('div[data-testid="list-page-mc-total-items"]').innerText;
+        var totalItems = parseInt(totalItemsText.match(/\d+/)[0]); // Extract number from the text
+        var loadedItems = document.getElementsByClassName('ipc-metadata-list-summary-item').length;
+
+        if (loadedItems < totalItems) {
+            var listContentDiv = document.querySelector('div[data-testid="list-page-mc-list-content"]');
+            listContentDiv.scrollIntoView({ behavior: 'smooth', block: 'end' }); // Scroll to the end of the list
+            setTimeout(checkAllFilmsLoaded, 750); // Recheck after a delay
         } else {
             removeNotificationBox();
-            setTimeout(scrollToRandomFilm, 1000); // Wait a bit before scrolling to film
+            setTimeout(scrollToRandomFilm, 500);
         }
     }
 
-    // Initialise scrolling or directly scroll to film
-    var loadMoreDivExists = document.querySelector('div[data-testid="ip_ref"]');
-    if (loadMoreDivExists) {
-        handleScrolling();
-    } else {
-        scrollToRandomFilm();
-    }
+    createNotificationBox();
+    checkAllFilmsLoaded();
 })();
 ```
